@@ -1,0 +1,185 @@
+Last login: Wed Feb 12 21:51:34 on ttys000
+/Users/apple/.zshrc:2: parse error near `)'
+/Users/apple/.zshrc:3: parse error near `_HOME=$(/usr/libexec...'
+apple@MacBook-Pro ~ % cd /Applications/XAMPP/xamppfiles/bin
+apple@MacBook-Pro bin % sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
+Password:
+Starting MariaDB
+ SUCCESS! 
+apple@MacBook-Pro bin % 2025-02-12 21:57:40 80845 mysqld_safe Logging to '/Applications/XAMPP/xamppfiles/var/mysql/MacBook-Pro.local.err'.
+2025-02-12 21:57:40 80845 mysqld_safe A mysqld process already exists
+./mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 2555
+Server version: 10.4.28-MariaDB Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| activity2          |
+| activity4          |
+| alopdb             |
+| information_schema |
+| mydatabase         |
+| mynewdb            |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| test               |
++--------------------+
+10 rows in set (0.000 sec)
+
+MariaDB [(none)]> create database alop_labexer2;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> use alop_labexer2;
+Database changed
+MariaDB [alop_labexer2]> create table orders(orderID int primary key, order_d8 date);
+Query OK, 0 rows affected (0.025 sec)
+
+MariaDB [alop_labexer2]> describe orders;
++----------+---------+------+-----+---------+-------+
+| Field    | Type    | Null | Key | Default | Extra |
++----------+---------+------+-----+---------+-------+
+| orderID  | int(11) | NO   | PRI | NULL    |       |
+| order_d8 | date    | YES  |     | NULL    |       |
++----------+---------+------+-----+---------+-------+
+2 rows in set (0.003 sec)
+
+MariaDB [alop_labexer2]> create table product(prodNo int primary key, proddesc varchar(250), prodprice float(10,2));
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [alop_labexer2]> describe product;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| prodNo    | int(11)      | NO   | PRI | NULL    |       |
+| proddesc  | varchar(250) | YES  |     | NULL    |       |
+| prodprice | float(10,2)  | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> create table order_detail(transno int primary key,MariaDB [alop_labexer2]> create table order_detail(transno int(10) not null auto_increment primary key, orderno int(10), prodno int(10), qty int(10), price float(10,2), subtotal float(10,2), constraint fk_orderID foreign key(orderno) references orders(orderID), constraint fk_prodNo foreign key(prodno) references product(prodNo));
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [alop_labexer2]> describe order_detail;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| transno  | int(10)     | NO   | PRI | NULL    | auto_increment |
+| orderno  | int(10)     | YES  | MUL | NULL    |                |
+| prodno   | int(10)     | YES  | MUL | NULL    |                |
+| qty      | int(10)     | YES  |     | NULL    |                |
+| price    | float(10,2) | YES  |     | NULL    |                |
+| subtotal | float(10,2) | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+6 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> alter table orders add shipping_name varchat(250) not null after order_d8, add shipping_address varchar(250) not null after shipping_name);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '(250) not null after order_d8, add shipping_address varchar(250) not null aft...' at line 1
+MariaDB [alop_labexer2]> alter table orders add shipping_name varchar(250) not null after order_d8, add shipping_address varchar(250) not null after shipping_name;
+Query OK, 0 rows affected (0.023 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [alop_labexer2]> describe orders;
++------------------+--------------+------+-----+---------+-------+
+| Field            | Type         | Null | Key | Default | Extra |
++------------------+--------------+------+-----+---------+-------+
+| orderID          | int(11)      | NO   | PRI | NULL    |       |
+| order_d8         | date         | YES  |     | NULL    |       |
+| shipping_name    | varchar(250) | NO   |     | NULL    |       |
+| shipping_address | varchar(250) | NO   |     | NULL    |       |
++------------------+--------------+------+-----+---------+-------+
+4 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> alter table product modify proddesc varchar(250) not null, modify prodprice float(10,2) not null;
+Query OK, 0 rows affected (0.027 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [alop_labexer2]> describe product;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| prodNo    | int(11)      | NO   | PRI | NULL    |       |
+| proddesc  | varchar(250) | NO   |     | NULL    |       |
+| prodprice | float(10,2)  | NO   |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+3 rows in set (0.003 sec)
+
+MariaDB [alop_labexer2]> alter table order_detail add constraint checkqty check(qty >= 0), add constraint checkprice check(price >=0);
+Query OK, 0 rows affected (0.050 sec)              
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [alop_labexer2]> describe table;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'table' at line 1
+MariaDB [alop_labexer2]> describe order_detail;
++----------+-------------+------+-----+---------+----------------+
+| Field    | Type        | Null | Key | Default | Extra          |
++----------+-------------+------+-----+---------+----------------+
+| transno  | int(10)     | NO   | PRI | NULL    | auto_increment |
+| orderno  | int(10)     | YES  | MUL | NULL    |                |
+| prodno   | int(10)     | YES  | MUL | NULL    |                |
+| qty      | int(10)     | YES  |     | NULL    |                |
+| price    | float(10,2) | YES  |     | NULL    |                |
+| subtotal | float(10,2) | YES  |     | NULL    |                |
++----------+-------------+------+-----+---------+----------------+
+6 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> alter order_detail drop subtotal;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'order_detail drop subtotal' at line 1
+MariaDB [alop_labexer2]> alter order_detail drop column subtotal;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'order_detail drop column subtotal' at line 1
+MariaDB [alop_labexer2]> alter table order_detail drop subtotal;
+Query OK, 0 rows affected (0.025 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [alop_labexer2]> show tables;
++-------------------------+
+| Tables_in_alop_labexer2 |
++-------------------------+
+| order_detail            |
+| orders                  |
+| product                 |
++-------------------------+
+3 rows in set (0.000 sec)
+
+MariaDB [alop_labexer2]> describe order_detail;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| transno | int(10)     | NO   | PRI | NULL    | auto_increment |
+| orderno | int(10)     | YES  | MUL | NULL    |                |
+| prodno  | int(10)     | YES  | MUL | NULL    |                |
+| qty     | int(10)     | YES  |     | NULL    |                |
+| price   | float(10,2) | YES  |     | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+5 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> describe orders;
++------------------+--------------+------+-----+---------+-------+
+| Field            | Type         | Null | Key | Default | Extra |
++------------------+--------------+------+-----+---------+-------+
+| orderID          | int(11)      | NO   | PRI | NULL    |       |
+| order_d8         | date         | YES  |     | NULL    |       |
+| shipping_name    | varchar(250) | NO   |     | NULL    |       |
+| shipping_address | varchar(250) | NO   |     | NULL    |       |
++------------------+--------------+------+-----+---------+-------+
+4 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> describe product;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| prodNo    | int(11)      | NO   | PRI | NULL    |       |
+| proddesc  | varchar(250) | NO   |     | NULL    |       |
+| prodprice | float(10,2)  | NO   |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [alop_labexer2]> 
