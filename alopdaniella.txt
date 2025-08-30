@@ -1,0 +1,211 @@
+Last login: Wed Feb 12 20:22:45 on ttys001
+/Users/apple/.zshrc:2: parse error near `)'
+/Users/apple/.zshrc:3: parse error near `_HOME=$(/usr/libexec...'
+apple@MacBook-Pro ~ % cd /Applications/XAMPP/xamppfiles/bin
+apple@MacBook-Pro bin % sudo /Applications/XAMPP/xamppfiles/bin/mysql.server start
+Password:
+Starting MariaDB
+ SUCCESS! 
+apple@MacBook-Pro bin % 2025-02-12 20:30:04 80062 mysqld_safe Logging to '/Applications/XAMPP/xamppfiles/var/mysql/MacBook-Pro.local.err'.
+2025-02-12 20:30:04 80062 mysqld_safe A mysqld process already exists
+./mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 2551
+Server version: 10.4.28-MariaDB Source distribution
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> show databases;
++--------------------+
+| Database           |
++--------------------+
+| activity4          |
+| alopdb             |
+| information_schema |
+| mydatabase         |
+| mynewdb            |
+| mysql              |
+| performance_schema |
+| phpmyadmin         |
+| test               |
++--------------------+
+9 rows in set (0.000 sec)
+
+MariaDB [(none)]> create database activity2;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> use activity2;
+Database changed
+MariaDB [activity2]> create table orders(orderID int primary key, order_d8 date);
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [activity2]> describe orders;
++----------+---------+------+-----+---------+-------+
+| Field    | Type    | Null | Key | Default | Extra |
++----------+---------+------+-----+---------+-------+
+| orderID  | int(11) | NO   | PRI | NULL    |       |
+| order_d8 | date    | YES  |     | NULL    |       |
++----------+---------+------+-----+---------+-------+
+2 rows in set (0.023 sec)
+
+MariaDB [activity2]> create table products(prodNo primary key, proddesc varchar(250), prodprice double(10,2));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'primary key, proddesc varchar(250), prodprice double(10,2))' at line 1
+MariaDB [activity2]> create table products(prodNo primary key, proddesc varchar(250), prodprice double(10,2));
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'primary key, proddesc varchar(250), prodprice double(10,2))' at line 1
+MariaDB [activity2]> create table products(prodNo int primary key, proddesc varchar(250), prodprice double(10,2));
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [activity2]> describe products;
++-----------+--------------+------+-----+---------+-------+
+| Field     | Type         | Null | Key | Default | Extra |
++-----------+--------------+------+-----+---------+-------+
+| prodNo    | int(11)      | NO   | PRI | NULL    |       |
+| proddesc  | varchar(250) | YES  |     | NULL    |       |
+| prodprice | double(10,2) | YES  |     | NULL    |       |
++-----------+--------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+
+MariaDB [activity2]> create table order_detail(transno int primary key, orderno int(10), prodno int(10), qty int(10), price double(10,2), subtotal double(10,2));
+Query OK, 0 rows affected (0.024 sec)
+
+MariaDB [activity2]> describe order_detail;
++----------+--------------+------+-----+---------+-------+
+| Field    | Type         | Null | Key | Default | Extra |
++----------+--------------+------+-----+---------+-------+
+| transno  | int(11)      | NO   | PRI | NULL    |       |
+| orderno  | int(10)      | YES  |     | NULL    |       |
+| prodno   | int(10)      | YES  |     | NULL    |       |
+| qty      | int(10)      | YES  |     | NULL    |       |
+| price    | double(10,2) | YES  |     | NULL    |       |
+| subtotal | double(10,2) | YES  |     | NULL    |       |
++----------+--------------+------+-----+---------+-------+
+6 rows in set (0.002 sec)
+
+MariaDB [activity2]> 
+MariaDB [activity2]> alter table order_detail add constraint orderID foreign key(orderno) references orders(orderID);
+Query OK, 0 rows affected (0.050 sec)              
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [activity2]> alter table order_detail add constraint prodNo foreign key(prodno) references product(prodNo);
+ERROR 1005 (HY000): Can't create table `activity2`.`order_detail` (errno: 150 "Foreign key constraint is incorrectly formed")
+MariaDB [activity2]> alter table order_detail add constraint prodNo forign key(prodno) references products(prodNo);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'forign key(prodno) references products(prodNo)' at line 1
+MariaDB [activity2]> alter table order_detail add constraint prodNo foreign key(prodno) references products(prodNo);
+Query OK, 0 rows affected (0.050 sec)              
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [activity2]> describe table order_detail;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'table order_detail' at line 1
+MariaDB [activity2]> describe order_detail;
++----------+--------------+------+-----+---------+-------+
+| Field    | Type         | Null | Key | Default | Extra |
++----------+--------------+------+-----+---------+-------+
+| transno  | int(11)      | NO   | PRI | NULL    |       |
+| orderno  | int(10)      | YES  | MUL | NULL    |       |
+| prodno   | int(10)      | YES  | MUL | NULL    |       |
+| qty      | int(10)      | YES  |     | NULL    |       |
+| price    | double(10,2) | YES  |     | NULL    |       |
+| subtotal | double(10,2) | YES  |     | NULL    |       |
++----------+--------------+------+-----+---------+-------+
+6 rows in set (0.002 sec)
+
+MariaDB [activity2]> select * from information_schema.table_constraints;
++--------------------+-------------------+---------------------------------+--------------+---------------------------+-----------------+
+| CONSTRAINT_CATALOG | CONSTRAINT_SCHEMA | CONSTRAINT_NAME                 | TABLE_SCHEMA | TABLE_NAME                | CONSTRAINT_TYPE |
++--------------------+-------------------+---------------------------------+--------------+---------------------------+-----------------+
+| def                | alopdb            | PRIMARY                         | alopdb       | painter                   | PRIMARY KEY     |
+| def                | activity2         | PRIMARY                         | activity2    | order_detail              | PRIMARY KEY     |
+| def                | activity2         | orderID                         | activity2    | order_detail              | FOREIGN KEY     |
+| def                | activity2         | prodNo                          | activity2    | order_detail              | FOREIGN KEY     |
+| def                | activity2         | PRIMARY                         | activity2    | orders                    | PRIMARY KEY     |
+| def                | activity2         | PRIMARY                         | activity2    | products                  | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__bookmark             | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__central_columns      | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__column_info          | PRIMARY KEY     |
+| def                | phpmyadmin        | db_name                         | phpmyadmin   | pma__column_info          | UNIQUE          |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__designer_settings    | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__export_templates     | PRIMARY KEY     |
+| def                | phpmyadmin        | u_user_type_template            | phpmyadmin   | pma__export_templates     | UNIQUE          |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__favorite             | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__history              | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__navigationhiding     | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__pdf_pages            | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__recent               | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__relation             | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__savedsearches        | PRIMARY KEY     |
+| def                | phpmyadmin        | u_savedsearches_username_dbname | phpmyadmin   | pma__savedsearches        | UNIQUE          |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__table_coords         | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__table_info           | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__table_uiprefs        | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__tracking             | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__userconfig           | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__usergroups           | PRIMARY KEY     |
+| def                | phpmyadmin        | PRIMARY                         | phpmyadmin   | pma__users                | PRIMARY KEY     |
+| def                | activity4         | PRIMARY                         | activity4    | order_detail              | PRIMARY KEY     |
+| def                | activity4         | orderID                         | activity4    | order_detail              | FOREIGN KEY     |
+| def                | activity4         | prodNo                          | activity4    | order_detail              | FOREIGN KEY     |
+| def                | activity4         | PRIMARY                         | activity4    | orders                    | PRIMARY KEY     |
+| def                | activity4         | PRIMARY                         | activity4    | product                   | PRIMARY KEY     |
+| def                | mynewdb           | PRIMARY                         | mynewdb      | department                | PRIMARY KEY     |
+| def                | mynewdb           | PRIMARY                         | mynewdb      | student                   | PRIMARY KEY     |
+| def                | mynewdb           | relationship                    | mynewdb      | student                   | FOREIGN KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | column_stats              | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | columns_priv              | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | db                        | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | event                     | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | func                      | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | gtid_slave_pos            | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | help_category             | PRIMARY KEY     |
+| def                | mysql             | name                            | mysql        | help_category             | UNIQUE          |
+| def                | mysql             | PRIMARY                         | mysql        | help_keyword              | PRIMARY KEY     |
+| def                | mysql             | name                            | mysql        | help_keyword              | UNIQUE          |
+| def                | mysql             | PRIMARY                         | mysql        | help_relation             | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | help_topic                | PRIMARY KEY     |
+| def                | mysql             | name                            | mysql        | help_topic                | UNIQUE          |
+| def                | mysql             | PRIMARY                         | mysql        | host                      | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | index_stats               | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | innodb_index_stats        | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | innodb_table_stats        | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | plugin                    | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | proc                      | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | procs_priv                | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | proxies_priv              | PRIMARY KEY     |
+| def                | mysql             | Host                            | mysql        | roles_mapping             | UNIQUE          |
+| def                | mysql             | PRIMARY                         | mysql        | servers                   | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | table_stats               | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | tables_priv               | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | time_zone                 | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | time_zone_leap_second     | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | time_zone_name            | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | time_zone_transition      | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | time_zone_transition_type | PRIMARY KEY     |
+| def                | mysql             | PRIMARY                         | mysql        | user                      | PRIMARY KEY     |
+| def                | mydatabase        | PRIMARY                         | mydatabase   | order_detail              | PRIMARY KEY     |
+| def                | mydatabase        | oder_relation                   | mydatabase   | order_detail              | FOREIGN KEY     |
+| def                | mydatabase        | product_relation                | mydatabase   | order_detail              | FOREIGN KEY     |
+| def                | mydatabase        | PRIMARY                         | mydatabase   | orders                    | PRIMARY KEY     |
+| def                | mydatabase        | PRIMARY                         | mydatabase   | product                   | PRIMARY KEY     |
++--------------------+-------------------+---------------------------------+--------------+---------------------------+-----------------+
+72 rows in set (0.092 sec)
+
+MariaDB [activity2]> alter table order_detail modify transno int auto_increment;
+Query OK, 0 rows affected (0.074 sec)              
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [activity2]> describe order_detail;
++----------+--------------+------+-----+---------+----------------+
+| Field    | Type         | Null | Key | Default | Extra          |
++----------+--------------+------+-----+---------+----------------+
+| transno  | int(11)      | NO   | PRI | NULL    | auto_increment |
+| orderno  | int(10)      | YES  | MUL | NULL    |                |
+| prodno   | int(10)      | YES  | MUL | NULL    |                |
+| qty      | int(10)      | YES  |     | NULL    |                |
+| price    | double(10,2) | YES  |     | NULL    |                |
+| subtotal | double(10,2) | YES  |     | NULL    |                |
++----------+--------------+------+-----+---------+----------------+
+6 rows in set (0.002 sec)
+
+MariaDB [activity2]> 
